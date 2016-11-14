@@ -1,0 +1,4 @@
+---
+director_ssl_key: certs/director.key
+director_ssl_cert: certs/director.crt
+director_ca_cert: certs/rootCA.pem
