@@ -1,2 +1,4 @@
 secrets.yml
 certs.yml
+bosh-state.json
+bosh.pem
