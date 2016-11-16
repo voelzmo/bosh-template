@@ -26,10 +26,10 @@ networks:
 - name: private
   type: manual
   subnets:
-  - range: (( private_network_cidr )) # <--- Replace with a private subnet CIDR
-    gateway: (( private_network_gateway )) # <--- Replace with a private subnet's gateway
-    dns: (( private_network_dns )) # <--- Replace with your DNS
-    cloud_properties: {net_id: (( private_network_uuid ))} # <--- # Replace with private network UUID
+  - range: ((private_network_cidr)) # <--- Replace with a private subnet CIDR
+    gateway: ((private_network_gateway)) # <--- Replace with a private subnet's gateway
+    dns: ((private_network_dns)) # <--- Replace with your DNS
+    cloud_properties: {net_id: ((private_network_uuid))} # <--- # Replace with private network UUID
 - name: public
   type: vip
 
@@ -51,10 +51,10 @@ jobs:
 
   networks:
   - name: private
-    static_ips: [(( private_bosh_ip ))] # <--- Replace with a private IP
+    static_ips: [((private_bosh_ip))] # <--- Replace with a private IP
     default: [dns, gateway]
   - name: public
-    static_ips: [(( public_bosh_ip ))] # <--- Replace with a floating IP
+    static_ips: [((public_bosh_ip))] # <--- Replace with a floating IP
 
   properties:
     nats:
@@ -71,8 +71,8 @@ jobs:
       adapter: postgres
 
     registry:
-      address: (( private_bosh_ip )) # <--- Replace with a private IP
-      host: (( private_bosh_ip )) # <--- Replace with a private IP
+      address: ((private_bosh_ip)) # <--- Replace with a private IP
+      host: ((private_bosh_ip)) # <--- Replace with a private IP
       db: *db
       http: {user: admin, password: admin, port: 25777}
       username: admin
@@ -80,7 +80,7 @@ jobs:
       port: 25777
 
     blobstore:
-      address: (( private_bosh_ip )) # <--- Replace with a private IP
+      address: ((private_bosh_ip)) # <--- Replace with a private IP
       port: 25250
       provider: dav
       director: {user: director, password: director-password}
@@ -99,26 +99,26 @@ jobs:
           - {name: admin, password: admin}
           - {name: hm, password: hm-password}
       ssl:
-        key: (( director_ssl_key ))
-        cert: (( director_ssl_cert ))
+        key: ((director_ssl_key))
+        cert: ((director_ssl_cert))
 
     hm:
       director_account:
         user: hm
         password: hm-password
-        ca_cert: (( director_ca_cert ))
+        ca_cert: ((director_ca_cert))
       resurrector_enabled: true
 
     openstack: &openstack
-      auth_url: (( openstack_auth_url )) # <--- Replace with OpenStack Identity API endpoint
-      project: (( openstack_project )) # <--- Replace with OpenStack project name
-      domain: (( openstack_domain )) # <--- Replace with OpenStack domain name
-      username: (( openstack_username )) # <--- Replace with OpenStack username
-      api_key: (( openstack_password )) # <--- Replace with OpenStack password
+      auth_url: ((openstack_auth_url)) # <--- Replace with OpenStack Identity API endpoint
+      project: ((openstack_project)) # <--- Replace with OpenStack project name
+      domain: ((openstack_domain)) # <--- Replace with OpenStack domain name
+      username: ((openstack_username)) # <--- Replace with OpenStack username
+      api_key: ((openstack_password)) # <--- Replace with OpenStack password
       default_key_name: bosh
       default_security_groups: [bosh]
 
-    agent: {mbus: "nats://nats:nats-password@(( private_bosh_ip )):4222"} # <--- Replace with a private IP
+    agent: {mbus: "nats://nats:nats-password@((private_bosh_ip)):4222"} # <--- Replace with a private IP
 
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
 
@@ -126,12 +126,12 @@ cloud_provider:
   template: {name: openstack_cpi, release: bosh-openstack-cpi}
 
   ssh_tunnel:
-    host: (( public_bosh_ip )) # <--- Replace with a floating IP
+    host: ((public_bosh_ip)) # <--- Replace with a floating IP
     port: 22
     user: vcap
     private_key: ./bosh.pem # Path relative to this manifest file
 
-  mbus: "https://mbus:mbus-password@(( public_bosh_ip )):6868" # <--- Replace with a floating IP
+  mbus: "https://mbus:mbus-password@((public_bosh_ip)):6868" # <--- Replace with a floating IP
 
   properties:
     openstack: *openstack

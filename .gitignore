@@ -2,3 +2,5 @@ secrets.yml
 certs.yml
 bosh-state.json
 bosh.pem
+bosh.pub
+certs

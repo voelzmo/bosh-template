@@ -2,7 +2,16 @@
 
 set -e
 
-certs=`dirname $0`/certs
+ip=$1
+if [[ "${ip}X" == "X" ]]; then
+  echo "USAGE: ./director_certs.sh <public IP>"
+  exit 1
+fi
+
+echo "Generating certs for ${ip}"
+
+mkdir -p tmp
+certs=`dirname $0`/certs/${ip}
 
 rm -rf $certs && mkdir -p $certs
 
@@ -43,7 +52,32 @@ EOL
   rm ./openssl-exts.conf
 }
 
-generateCert director FLOATING-IP # <--- Replace with public Director IP
+generateCert director ${ip}
 
-echo "Finished..."
-ls -la .
+echo "Generating yaml file for golang CLI substitution..."
+certs=`dirname $0`/certs/${ip}
+
+function indent() {
+  c='s/^/  /'
+  case $(uname) in
+    Darwin) sed -l "$c";;
+    *)      sed -u "$c";;
+  esac
+}
+
+
+cat > certs-${ip}.yml <<EOF
+---
+director_ssl_key: |
+$(cat director.key | indent)
+
+director_ssl_cert: |
+$(cat director.crt | indent)
+
+director_ca_cert: |
+$(cat rootCA.pem | indent)
+EOF
+
+echo "Combine manifest template below with your BOSH manifest:"
+cat certs-${ip}.yml
+echo
