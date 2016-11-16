@@ -10,7 +10,6 @@ fi
 
 echo "Generating certs for ${ip}"
 
-mkdir -p tmp
 certs=`dirname $0`/certs/${ip}
 
 rm -rf $certs && mkdir -p $certs
